@@ -3,6 +3,10 @@ pipeline {
         label 'laravel'
     }
 
+    tools {
+        git 'Default'
+    }
+
     stages {
         stage('Build') {
             steps {

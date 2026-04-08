@@ -29,6 +29,15 @@ pipeline {
 
                 echo 'Generating application key...'
                 sh 'php artisan key:generate'
+
+                echo 'Installing PHP dependencies...'
+                sh 'composer install'
+
+                echo 'Installing Node dependencies...'
+                sh 'npm install'
+
+                echo 'Building frontend assets...'
+                sh 'npm run build'
             }
         }
 

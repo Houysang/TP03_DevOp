@@ -1,0 +1,33 @@
+- name: Deploy Laravel App
+  hosts: tp3-2026
+  become: yes
+
+  tasks:
+    - name: Clone or update project
+      shell: |
+        if [ ! -d "/var/www/i4-tp3" ]; then
+          git clone YOUR_REPO_URL /var/www/i4-tp3
+        else
+          cd /var/www/i4-tp3 && git pull
+        fi
+
+    - name: Install PHP dependencies
+      shell: |
+        cd /var/www/i4-tp3
+        composer install --no-interaction
+
+    - name: Build frontend
+      shell: |
+        cd /var/www/i4-tp3
+        npm install
+        npm run build
+
+    - name: Generate key
+      shell: |
+        cd /var/www/i4-tp3
+        php artisan key:generate
+
+    - name: Run migrations
+      shell: |
+        cd /var/www/i4-tp3
+        php artisan migrate --force

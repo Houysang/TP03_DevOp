@@ -48,12 +48,12 @@ pipeline {
             }
         }
 
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Deploying...'
-        //         sh 'ansible-playbook -i inventory/hosts.ini deploy.yml'
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                sh 'ansible-playbook -i inventory/hosts.ini deploy.yml'
 
-        //     }
-        // }
+            }
+        }
     }
 }

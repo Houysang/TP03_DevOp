@@ -8,6 +8,25 @@ pipeline {
     }
 
     stages {
+        stage('Build Frontend') {
+            steps {
+                sh '''
+                export NODE_OPTIONS=--max_old_space_size=2048
+                npm install
+                npm run build
+                '''
+            }
+        }
+
+        stage('Build Frontend (Fix Memory Issue)') {
+            steps {
+                sh '''
+                export NODE_OPTIONS=--max_old_space_size=2048
+                npm run build
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Houysang/TP03_DevOp.git'

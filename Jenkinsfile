@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Houysang/TP03_DevOp.git'
+                git branch: 'main', url: 'https://github.com/Houysang/TP03_DevOp.git'
             }
         }
 

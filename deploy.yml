@@ -2,32 +2,66 @@
   hosts: tp3-2026
   become: yes
 
+  vars:
+    app_dir: /var/www/i4-tp3
+
   tasks:
+
+    - name: Ensure git is installed
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+
     - name: Clone or update project
       shell: |
-        if [ ! -d "/var/www/i4-tp3" ]; then
-          git clone YOUR_REPO_URL /var/www/i4-tp3
+        if [ ! -d "{{ app_dir }}" ]; then
+          git clone https://github.com/Houysang/TP03_DevOp.git {{ app_dir }}
         else
-          cd /var/www/i4-tp3 && git pull
+          cd {{ app_dir }} && git pull
         fi
 
     - name: Install PHP dependencies
-      shell: |
-        cd /var/www/i4-tp3
-        composer install --no-interaction
+      shell: composer install --no-interaction
+      args:
+        chdir: "{{ app_dir }}"
 
     - name: Build frontend
       shell: |
-        cd /var/www/i4-tp3
         npm install
         npm run build
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Ensure .env exists
+      shell: |
+        if [ ! -f .env ]; then
+          cp .env.example .env
+        fi
+      args:
+        chdir: "{{ app_dir }}"
 
     - name: Generate key
-      shell: |
-        cd /var/www/i4-tp3
-        php artisan key:generate
+      shell: php artisan key:generate --force
+      args:
+        chdir: "{{ app_dir }}"
 
     - name: Run migrations
+      shell: php artisan migrate --force
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Set permissions
       shell: |
-        cd /var/www/i4-tp3
-        php artisan migrate --force
+        chmod -R 775 storage
+        chmod -R 775 bootstrap/cache
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Optimize Laravel
+      shell: |
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+      args:
+        chdir: "{{ app_dir }}"
